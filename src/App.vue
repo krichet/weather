@@ -8,7 +8,7 @@
         <button @click="this.getWeather()" class="btn-submit">add location</button>
     </div>    
 
-    <Location :locations="locations"/>
+    <Location :locations="locations" @removeLocation="this.removeLocation()"/>
 
   </main>
 </template>
@@ -26,7 +26,8 @@ export default {
       location: {
         lat: '',
         lon: ''
-      }
+      },
+      storage: null
     }
   },
   methods: {
@@ -43,27 +44,27 @@ export default {
 
       // add location to local storage
       if (localStorage.getItem('weather')) {
-        let storage = JSON.parse(localStorage.getItem('weather'))                
+        this.storage = JSON.parse(localStorage.getItem('weather'))                
         
-        let newItem = storage.find((item) => item.name === newLocation.name)
+        let newItem = this.storage.find((item) => item.name === newLocation.name)
 
         if (!newItem) {
           console.log('added')
-          storage.push(newLocation)
+          this.storage.push(newLocation)
         }
 
         else {
           console.log(`${newLocation.name} is already added`)
         }
 
-        localStorage.setItem('weather', JSON.stringify(storage))
+        localStorage.setItem('weather', JSON.stringify(this.storage))
       }
 
       else {
-        let storage = []
-        storage.push(newLocation)
+        this.storage = []
+        this.storage.push(newLocation)
         JSON.stringify(storage)
-        localStorage.setItem('weather', JSON.stringify(storage))
+        localStorage.setItem('weather', JSON.stringify(this.storage))
       }      
 
     },
@@ -90,7 +91,15 @@ export default {
     getUserCoordinates(data) {
       this.location.lat = data.coords.latitude
       this.location.lon = data.coords.longitude
-    }   
+    },
+    
+    removeLocation(id) {
+      this.storage = JSON.parse(localStorage.getItem('weather'))            
+      this.storage.splice(id, 1)
+      console.log('removed')
+      this.locations = this.storage
+      localStorage.setItem('weather', JSON.stringify(this.storage))      
+    }       
   },
   created () {
     

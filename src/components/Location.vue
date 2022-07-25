@@ -5,7 +5,7 @@
         <div class="location__bullets">          
           <p class="location__temp">{{item.temp}} °C</p>
           <p class="location__sky">{{item.sky}}</p>
-          <button @click="removeLocation" :id="index">remove</button>
+          <button @click="$emit('removeLocation', index)" :id="index">remove</button>
         </div>
     </div>
   </div>
@@ -18,15 +18,13 @@
 
 export default {
   props:['locations'],
-  methods: {
-    removeLocation() {
-      let storage = JSON.parse(localStorage.getItem('weather'))      
-      let locationIndex = event.target.id
-      storage.splice(locationIndex, 1)
-
-      localStorage.setItem('weather', JSON.stringify(storage))
-
+  data() {
+    return {
+      storage: null
     }
+  },
+  methods: {
+
   }
 }
 
