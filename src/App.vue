@@ -5,7 +5,7 @@
       <h3>Choose your coordinates</h3>
         <span>latitude <input v-model="location.lat" type="text" placeholder="latitude"></span>
         <span>longitude <input v-model="location.lon" type="text" placeholder="longitude"></span>
-        <button @click="this.getWeather()" class="btn-submit">add location</button>      
+        <button @click="this.getWeather()" class="btn-submit">add location</button>
     </div>    
 
     <Location :locations="locations"/>
@@ -24,8 +24,8 @@ export default {
     return {
       locations: [],
       location: {
-        lat: 50.450001,
-        lon: 30.523333        
+        lat: '',
+        lon: ''
       }
     }
   },
@@ -38,27 +38,31 @@ export default {
         name: response.data.name,
         sky: response.data.weather[0].description,
         temp: response.data.main.temp,
-        temp_min: response.data.main.temp_min,
-        temp_max: response.data.main.temp_max,
-        feels_like: response.data.main.feels_like,
-        preassure: response.data.main.pressure,
-        sea_lvl: response.data.main.sea_level,
-        humidity: response.data.main.humidity,
-        wind_speed: response.data.wind.speed,
-        wind_gust: response.data.wind.gust
       }
 
 
       // add location to local storage
       if (localStorage.getItem('weather')) {
-        const storage = JSON.parse(localStorage.getItem('weather'))
-        storage.push(newLocation)
+        let storage = JSON.parse(localStorage.getItem('weather'))                
+        
+        let newItem = storage.find((item) => item.name === newLocation.name)
+
+        if (!newItem) {
+          console.log('added')
+          storage.push(newLocation)
+        }
+
+        else {
+          console.log(`${newLocation.name} is already added`)
+        }
+
         localStorage.setItem('weather', JSON.stringify(storage))
       }
 
       else {
-        const storage = []            
+        let storage = []
         storage.push(newLocation)
+        JSON.stringify(storage)
         localStorage.setItem('weather', JSON.stringify(storage))
       }      
 
@@ -69,7 +73,7 @@ export default {
         this.axios
           .get(`https://fcc-weather-api.glitch.me/api/current?lat=${this.location.lat}&lon=${this.location.lon}`)
           .then((response) => {
-            this.saveToStorage(response)
+            this.saveToStorage(response)                
             this.displayLocations()
           })
       }
@@ -80,19 +84,20 @@ export default {
 
     displayLocations() {
       this.locations = JSON.parse(localStorage.getItem('weather'))      
+      // console.log(this.locations)
     },    
 
     getUserCoordinates(data) {
       this.location.lat = data.coords.latitude
       this.location.lon = data.coords.longitude
-    }
-
+    }   
   },
   created () {
-
+    
     // request user coorinates
     window.navigator.geolocation.getCurrentPosition((data) => {
       this.getUserCoordinates(data)
+      this.getWeather()
     }, console.log);
 
     // render locations

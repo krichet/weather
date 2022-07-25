@@ -1,5 +1,5 @@
 #app {
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
@@ -29,9 +29,19 @@
   display: block;
   background-color: #eeeee4;
   border-radius: 10px;
-  width: 300px;
+  width: 200px;
   margin: 5px 10px 5px 10px;
   padding: 10px;
+  text-align: center;
+  box-shadow:#eeeee4;
+}
+
+.location__temp {
+  font-size: 26px;
+}
+
+.location__sky {
+  font-size: 18px;
 }
 
 .location__col {
@@ -40,4 +50,5 @@
 
 .location__bullets {
   display: flex;
+  flex-direction: column;
 }
