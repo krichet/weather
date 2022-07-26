@@ -5,10 +5,10 @@
       <h3>Choose your coordinates</h3>
         <span>latitude <input v-model="location.lat" type="text" placeholder="latitude"></span>
         <span>longitude <input v-model="location.lon" type="text" placeholder="longitude"></span>
-        <button @click="this.getWeather()" class="btn-submit">add location</button>
+        <button @click="getWeather" class="btn-submit">add location</button>
     </div>    
 
-    <Location :locations="locations" @removeLocation="this.removeLocation()"/>
+    <Location :locations="locations" @removeLocation="removeLocation"/>
 
   </main>
 </template>
@@ -95,15 +95,15 @@ export default {
     
     removeLocation(id) {
       this.storage = JSON.parse(localStorage.getItem('weather'))            
-      this.storage.splice(id, 1)
-      console.log('removed')
+      this.storage.splice(id, 1)   
+      console.log(removed)   
       this.locations = this.storage
       localStorage.setItem('weather', JSON.stringify(this.storage))      
     }       
   },
   created () {
     
-    // request user coorinates
+    // request user coordinates and display location by default
     window.navigator.geolocation.getCurrentPosition((data) => {
       this.getUserCoordinates(data)
       this.getWeather()
