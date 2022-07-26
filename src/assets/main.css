@@ -62,4 +62,16 @@
 .pagination-container {
   list-style: none;
   display: none;
+  padding: 0;
+}
+
+@media screen and (max-width:650px){
+  .coordinates,
+  .locations {
+    display: flex;
+    flex-direction: column;
+  }
+  .coordinates * {
+    margin-bottom: 5px;
+  }
 }
