@@ -10,11 +10,18 @@
 
     <Location :locations="locations" @removeLocation="removeLocation"/>
 
+    <vue-awesome-paginate
+      :total-items="this.totalItems"
+      :items-per-page="this.perPage"
+      :on-click="displayLocations"
+    />
+
   </main>
 </template>
 
 <script>
 import Location from "./components/Location.vue"
+
 
 export default {
   components: {
@@ -22,6 +29,9 @@ export default {
   },  
   data() {
     return {
+      totalItems: 0,
+      perPage: 5,
+      page: 1,
       locations: [],
       location: {
         lat: '',
@@ -31,6 +41,18 @@ export default {
     }
   },
   methods: {
+    displayPagination() {
+      let pagination = document.getElementsByClassName('pagination-container')[0]
+        if(this.totalItems > 5) {
+          pagination.style.display = 'flex'
+        }
+    },
+    updateTotalLocations() {
+      this.totalItems = JSON.parse(localStorage.getItem('weather')).length
+      
+      this.displayPagination()
+
+    },
     saveToStorage(response) {
 
       //prepare new location
@@ -65,7 +87,9 @@ export default {
         this.storage.push(newLocation)
         JSON.stringify(storage)
         localStorage.setItem('weather', JSON.stringify(this.storage))
-      }      
+      }   
+      
+      this.updateTotalLocations()
 
     },
 
@@ -83,9 +107,17 @@ export default {
       }
     },
 
-    displayLocations() {
-      this.locations = JSON.parse(localStorage.getItem('weather'))      
-      // console.log(this.locations)
+    displayLocations(pageId) {
+      this.storage = JSON.parse(localStorage.getItem('weather'))      
+
+      // show first page by default
+      this.page = pageId || 1
+
+      //display locations for other pages
+			let from = (this.page * this.perPage) - this.perPage
+			let to = (this.page * this.perPage)
+			this.locations = this.storage.slice(from, to)    
+
     },    
 
     getUserCoordinates(data) {
@@ -96,9 +128,11 @@ export default {
     removeLocation(id) {
       this.storage = JSON.parse(localStorage.getItem('weather'))            
       this.storage.splice(id, 1)   
-      console.log(removed)   
+      console.log('removed')   
       this.locations = this.storage
       localStorage.setItem('weather', JSON.stringify(this.storage))      
+
+      this.updateTotalLocations()
     }       
   },
   created () {
@@ -111,7 +145,9 @@ export default {
 
     // render locations
     this.displayLocations()    
-  }  
+    this.displayPagination()
+
+  }
 }
 
 
