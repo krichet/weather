@@ -85,9 +85,11 @@ export default {
       else {
         this.storage = []
         this.storage.push(newLocation)
-        JSON.stringify(storage)
+        JSON.stringify(this.storage)
         localStorage.setItem('weather', JSON.stringify(this.storage))
       }   
+
+      
       
       this.updateTotalLocations()
 
@@ -108,16 +110,18 @@ export default {
     },
 
     displayLocations(pageId) {
-      this.storage = JSON.parse(localStorage.getItem('weather'))      
 
-      // show first page by default
-      this.page = pageId || 1
+      if (this.storage) {
+        this.storage = JSON.parse(localStorage.getItem('weather'))          
 
-      //display locations for other pages
-			let from = (this.page * this.perPage) - this.perPage
-			let to = (this.page * this.perPage)
-			this.locations = this.storage.slice(from, to)    
+        // show first page by default
+        this.page = pageId || 1
 
+        //display locations for other pages
+        let from = (this.page * this.perPage) - this.perPage
+        let to = (this.page * this.perPage)
+        this.locations = this.storage.slice(from, to)    
+      }      
     },    
 
     getUserCoordinates(data) {
